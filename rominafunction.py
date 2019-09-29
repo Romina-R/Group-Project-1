@@ -16,4 +16,4 @@ def romina(madeupdata:dict):
         
         listofsalaryrange.append(salaryrange) 
 
-        return degree, listofsalaryrange
+    return degree, listofsalaryrange

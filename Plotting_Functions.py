@@ -7,6 +7,17 @@ madeupslope=[45000, 55000, 65000, 85000, 88000, 112000]
 madeupintercept=[-45000,-205000,-245000,-345000,-425000]
 madeuplegend='Fine Art'
 
+def warningmessage(minvalue:float,maxvalue:float):
+    if minvalue<0 & maxvalue<0:
+        warning='Bro you wasting your time'
+    if minvalue>0 & maxvalue<0:
+        warning='Good luck you might break even'
+    if minvalue>0 & maxvalue>50:
+        warning='Good luck you might break even'
+    if minvalue>0 & max<50:
+        warning='Grats you are interested in the right thing'
+    return warning
+
 def intersection(a1:float,b1:float,a2:float,b2:float):
     #find the intersection of lines y1=a1*x+b1 and y2=a2*x+b2
     x=(b2-b1)/(a1-a2)
@@ -30,6 +41,9 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     master_axis_1 = master_1[0] 
     master_axis_2 = master_2[0] 
     master_axis = max(master_axis_1,master_axis_2)
+# Prevent if the degree never pays off.
+    if master_axis>50:
+        master_axis=50
     master_range = np.arange(2, master_axis+5 , 1)
     under_range_1 = np.arange(0, master_axis+5 , 1)
 
@@ -37,6 +51,9 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     phd_axis_1 = phd_1[0]
     phd_axis_2 = phd_2[0] 
     phd_axis = max(phd_axis_1, phd_axis_2)
+# Prevent if the degree never pays off.
+    if phd_axis>50:
+        phd_axis=50
     phd_range = np.arange(4, phd_axis+5 , 1)
     under_range_2 = np.arange(0, phd_axis+5 , 1)
     
@@ -52,19 +69,26 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     y4=phd_range*slope[4]+yintercept[3]
     y5=phd_range*slope[5]+yintercept[4]
     
+    bottom=0.25
+    left=0.15
+    figuresize=(9,6)
+    plt.figure(figsize=(figuresize))
+    plt.gcf().subplots_adjust(bottom=bottom)
+    plt.gcf().subplots_adjust(left=left)
     
+    plt.tight_layout() 
     plt.plot(under_range_1, y1,'b-.',label=f"Undergrad Income At {round(percentile*100, 1)} Percentile",linewidth=4,)
     plt.plot(master_range, y3 ,'r',label="Master Income + Standard Deviation",linewidth=2,)
     plt.plot(master_range, y2 ,'m',label="Master Income - Standard Deviation",linewidth=2,)
     
     
-    plt.tight_layout() 
+
     plt.legend()
     plt.title(f"{legend} Undergrad vs Master Income") 
     plt.xlabel(f"It will take {int(master_2[0])} to {int(master_1[0])} Years to Break Even with {round(percentile*100, 1)}% of Undergrad \nYears Out of College")
     plt.ylabel("Accumulate Income $")
     # Set the starting range from 0 to make plot look better.
-    plt.xlim(0, max(master_range))
+    plt.xlim(0, master_axis+5)
     plt.hlines(y=master_2[1], xmin=0, xmax=master_2[0], linewidth=2, color='darkgreen', linestyles='dotted')
     plt.hlines(y=master_1[1], xmin=0, xmax=master_1[0], linewidth=2, color='darkgreen', linestyles='dotted')
     
@@ -75,19 +99,25 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     
     plt.scatter(master_2[0],master_2[1],marker="X", c='darkgreen',s=500)
     plt.scatter(master_1[0],master_1[1],marker="X", c='darkgreen',s=500)
+    path1=f"Images/{legend}_Undergrad_vs_Master_Income"
+    plt.savefig(path1)
     
     plt.figure()
+    plt.gcf().subplots_adjust(bottom=bottom)
+    plt.gcf().subplots_adjust(left=left)
+    plt.figure(figsize=(figuresize))
+    plt.tight_layout()
     plt.plot(under_range_2,y11,'b-.',label=f"Undergrad Income At {round(percentile*100, 1)} Percentile",linewidth=4,)
     plt.plot(phd_range,y5,'r',label="Phd Income + Standard Deviation",linewidth=2,)
     plt.plot(phd_range,y4,'m',label="Phd Income - Standard Deviation",linewidth=2,)
     
-    plt.tight_layout() 
+
     plt.legend()
     plt.title(f"{legend} Undergrad vs Phd Income") 
     plt.xlabel(f"It will take {int(phd_2[0])} to {int(phd_1[0])} Years to Break Even with {round(percentile*100, 1)}% of Undergrad \nYears Out of College")
     plt.ylabel("Accumulate Income $") 
     # Set the starting range from 0 to make plot look better.
-    plt.xlim(0, max(phd_range))
+    plt.xlim(0, phd_axis+5)
     plt.hlines(y=phd_2[1], xmin=0, xmax=phd_2[0], linewidth=2, color='darkgreen', linestyles='dotted')
     plt.hlines(y=phd_1[1], xmin=0, xmax=phd_1[0], linewidth=2, color='darkgreen', linestyles='dotted')
     
@@ -98,3 +128,12 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     
     plt.scatter(phd_2[0],phd_2[1],marker="X", c='darkgreen',s=500)
     plt.scatter(phd_1[0],phd_1[1],marker="X", c='darkgreen',s=500)
+    path2=f"Images/{legend}_Undergrad_vs_Phd_Income"
+    plt.savefig(path2)
+    plt.figure()
+    plt.gcf().subplots_adjust(bottom=bottom)
+    plt.gcf().subplots_adjust(left=left)
+    plt.figure(figsize=(figuresize))
+    plt.tight_layout() 
+
+    

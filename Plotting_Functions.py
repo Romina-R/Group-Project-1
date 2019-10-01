@@ -114,6 +114,7 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     y5=phd_range*slope[5]+yintercept[5]
     y44=phd_range*undergrad_mean+phd_z_yint
     
+    
     bottom=0.25
     left=0.15
     figuresize=(9,6)
@@ -147,11 +148,10 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     plt.scatter(master_2[0],master_2[1],marker="X", c='darkgreen',s=500)
     plt.scatter(master_1[0],master_1[1],marker="X", c='darkgreen',s=500)
     path1=f"Images/{legend}_Undergrad_vs_Master_Income"
-    plt.show()
     plt.savefig(path1)
     
     
-    plt.figure()
+    
     plt.gcf().subplots_adjust(bottom=bottom)
     plt.gcf().subplots_adjust(left=left)
     plt.figure(figsize=(figuresize))
@@ -180,13 +180,8 @@ def plotline(slope:list, yintercept:list,legend:str, percentile:float):
     plt.scatter(phd_2[0],phd_2[1],marker="X", c='darkgreen',s=500)
     plt.scatter(phd_1[0],phd_1[1],marker="X", c='darkgreen',s=500)
     path2=f"Images/{legend}_Undergrad_vs_Phd_Income"
-    plt.show()
     plt.savefig(path2)
     
-    plt.figure()
-    plt.gcf().subplots_adjust(bottom=bottom)
-    plt.gcf().subplots_adjust(left=left)
-    plt.figure(figsize=(figuresize))
-    plt.tight_layout() 
+
 
     

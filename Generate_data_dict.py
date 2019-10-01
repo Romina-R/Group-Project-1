@@ -6,7 +6,7 @@
 import pandas as pd
 import numpy as np
 
-def generate_data_dict(path):
+def generate_data_dict(path, upper, lower):
 
     #path="Resources/US_Data.csv"
     fields = ['FOD1P','SCHL','WAGP','AGEP','COW']
@@ -70,6 +70,31 @@ def generate_data_dict(path):
                                 'WAGP':'Income', 'AGEP':'Age', 
                                 'COW':'Class of Worker'}, inplace=True)
     rename_df.head(10)
+    
+    # Extra magic trick from Steve to cut off the top percentiles
+    # Delete all the negative incomes cause they are probably doing some business
+    rename_df=rename_df[rename_df['Income']>0]
+    # Find top percentile
+    income_percentile=rename_df.groupby(['Field of Study', 'Educational Attainment' ])['Income'].quantile(upper)
+    pindex=income_percentile.index
+    for i in range(len(pindex)):
+        rename_df.loc[(rename_df['Field of Study'] == pindex[i][0]) & 
+                                  (rename_df['Educational Attainment'] == pindex[i][1]) & 
+                                 (rename_df['Income'] >= income_percentile[i]), ['Income']]=999999999
+    rename_df=rename_df[rename_df['Income']!=999999999]
+    
+    
+    # Find bottom percentile
+    income_percentile=rename_df.groupby(['Field of Study', 'Educational Attainment' ])['Income'].quantile(lower)
+    pindex=income_percentile.index
+    for i in range(len(pindex)):
+        rename_df.loc[(rename_df['Field of Study'] == pindex[i][0]) & 
+                                  (rename_df['Educational Attainment'] == pindex[i][1]) & 
+                                 (rename_df['Income'] <= income_percentile[i]), ['Income']]=999999999
+    rename_df=rename_df[rename_df['Income']!=999999999]
+
+    
+    
 
 
     # # Create DataFrames for plotting
@@ -119,9 +144,7 @@ def generate_data_dict(path):
     FOS_list = mean_df_cpy['Field of Study'].unique().tolist()
 
     #std_df_cpy[std_df_cpy['Field of Study'] == 'Nursing']
-    data_dict[''] = ['Bachelor Degree Mean', 'Bachelor Degree std', 
-                            'Masters Degree Mean', 'Masters Degree std', 
-                            'PhD Mean', 'PhD std']
+   
     for fos in FOS_list:
         bs_mean = mean_df_cpy[(mean_df_cpy['Field of Study'] == fos) &            (mean_df_cpy['Educational Attainment'] == 'Bachelors_Degree')]['Mean'].tolist()[0]
         bs_std = std_df_cpy[(std_df_cpy['Field of Study'] == fos) &            (std_df_cpy['Educational Attainment'] == 'Bachelors_Degree')]['std'].tolist()[0]
@@ -137,7 +160,6 @@ def generate_data_dict(path):
     comment = '''
     The data_dict template is:
     {<field labe>:<list of values>}
-
     {'Field of study':[ bachelors_degree_mean, bachelors_degree_std, 
                         masters_degree_mean, masters_degree_std, 
                         PhD_mean, PhD_std ]  
@@ -147,7 +169,6 @@ def generate_data_dict(path):
     #pprint(data_dict)
 
     data_df = pd.DataFrame(data_dict)
-    data_df.set_index('')
+
 
     return data_dict
-

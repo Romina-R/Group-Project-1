@@ -6,7 +6,7 @@
 import pandas as pd
 import numpy as np
 
-def generate_data_dict(path):
+def generate_data_dict(path, upper, lower):
 
     #path="Resources/US_Data.csv"
     fields = ['FOD1P','SCHL','WAGP','AGEP','COW']
@@ -75,7 +75,7 @@ def generate_data_dict(path):
     # Delete all the negative incomes cause they are probably doing some business
     rename_df=rename_df[rename_df['Income']>0]
     # Find top percentile
-    income_percentile=rename_df.groupby(['Field of Study', 'Educational Attainment' ])['Income'].quantile(.85)
+    income_percentile=rename_df.groupby(['Field of Study', 'Educational Attainment' ])['Income'].quantile(upper)
     pindex=income_percentile.index
     for i in range(len(pindex)):
         rename_df.loc[(rename_df['Field of Study'] == pindex[i][0]) & 
@@ -85,7 +85,7 @@ def generate_data_dict(path):
     
     
     # Find bottom percentile
-    income_percentile=rename_df.groupby(['Field of Study', 'Educational Attainment' ])['Income'].quantile(.15)
+    income_percentile=rename_df.groupby(['Field of Study', 'Educational Attainment' ])['Income'].quantile(lower)
     pindex=income_percentile.index
     for i in range(len(pindex)):
         rename_df.loc[(rename_df['Field of Study'] == pindex[i][0]) & 
